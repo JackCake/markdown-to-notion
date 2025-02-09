@@ -369,7 +369,7 @@ function makeDivider() {
   };
 }
 
-function clean(line) {
+function clean(line = '') {
   return line.replaceAll('\\\\', '\\')
     .replaceAll('\\~', '~')
     .replaceAll('\\_', '_')
