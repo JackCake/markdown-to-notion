@@ -13,7 +13,7 @@ import {
   makeDivider,
 } from './factory.js';
 
-export function clean(line) {
+export function clean(line = '') {
   return line.replaceAll('\\\\', '\\')
     .replaceAll('\\~', '~')
     .replaceAll('\\_', '_')
