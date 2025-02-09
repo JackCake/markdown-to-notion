@@ -1,0 +1,34 @@
+{
+  "name": "@jackcake/markdown-to-notion",
+  "version": "1.0.0",
+  "description": "Convert markdown lines to Notion blocks.",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "exports": {
+    "import": "./dist/index.mjs",
+    "require": "./dist/index.cjs"
+  },
+  "types": "types/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup src/index.js --format cjs --file dist/index.cjs && rollup src/index.js --format esm --file dist/index.mjs"
+  },
+  "keywords": [
+    "markdown",
+    "notion"
+  ],
+  "author": "Jack Cake",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JackCake/markdown-to-notion.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JackCake/markdown-to-notion/issues"
+  },
+  "homepage": "https://github.com/JackCake/markdown-to-notion#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  }
+}
