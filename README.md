@@ -1,7 +1,7 @@
 # markdown-to-notion
 
 ## Installation 
-``` npm install @jackcake/markdown-to-notion ```
+``` npm install @jackcake/markdown-to-notion --registry=https://npm.pkg.github.com ```
 
 ## Usage
 ```javascript
