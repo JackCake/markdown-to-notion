@@ -386,7 +386,7 @@ function clean(line = '') {
     .trim();
 }
 
-function convertToNotionBlocks(lines, imageProcessCallback, emojiTable = {}) {
+function convertToNotionBlocks(lines = [], imageProcessCallback, emojiTable = {}) {
   const listItemMarkdownRegex = /^(\s*)([-*+]|\d+\.\s|-\s\[( |x|X)\]\s)(.+)/;
   const headerMarkdownRegex = /^#{1,3} /;
   const embedFileMarkdownRegex = /^!\[\]\((.*?)\)/;
@@ -538,7 +538,7 @@ function convertToNotionBlocks(lines, imageProcessCallback, emojiTable = {}) {
   return blocks;
 }
 
-function convertToRichText(content, isCodeBlock = false) {
+function convertToRichText(content = '', isCodeBlock = false) {
   const boldMarkdownRegex = /(?<!\\)\*\*(.*?)\*\*/g;  // **bold**
   const italicMarkdownRegex = /(?<!\\)\*(.*?)\*/g;    // *italic*
   const strikethroughMarkdownRegex = /(?<!\\)~~(.*?)~~/g;  // ~~strikethrough~~
