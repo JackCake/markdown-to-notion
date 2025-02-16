@@ -384,7 +384,11 @@ export function convertToRichText(content = '', isCodeBlock = false) {
       if (isAllCode) {
         richTextObject.annotations.code = true;
       }
-      richTextObject[richTextObject.type].content = clean(richTextObject[richTextObject.type].content); // Remove the slash.
+      if (richTextObject.type === equationType) {
+        richTextObject[richTextObject.type].expression = clean(richTextObject[richTextObject.type].expression); // Remove the slash.
+      } else {
+        richTextObject[richTextObject.type].content = clean(richTextObject[richTextObject.type].content); // Remove the slash.
+      }
     });
   }
 
