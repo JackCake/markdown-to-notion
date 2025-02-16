@@ -1,6 +1,6 @@
 {
   "name": "@jackcake/markdown-to-notion",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Convert markdown lines to Notion blocks.",
   "type": "module",
   "main": "dist/index.cjs",

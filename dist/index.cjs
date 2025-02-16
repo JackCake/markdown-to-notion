@@ -386,10 +386,10 @@ function clean(line = '') {
     .trim();
 }
 
-function convertToNotionBlocks(lines = [], imageProcessCallback, emojiTable = {}) {
+function convertToNotionBlocks(lines = [], imageProcessCallback, localFileProcessCallback, emojiTable = {}) {
   const listItemMarkdownRegex = /^(\s*)([-*+]|\d+\.\s|-\s\[( |x|X)\]\s)(.+)/;
   const headerMarkdownRegex = /^#{1,3} /;
-  const embedFileMarkdownRegex = /^!\[\]\((.*?)\)/;
+  const imageMarkdownRegex = /^!\[\]\((.*?)\)/;
   const tableMarkdownRegex = /^\|(.+)\|$/;
   const linkMarkdownRegex = /^\[(.*)\]\((.*)\)$/;
   const quoteMarkdownRegex = /^> /;
@@ -412,7 +412,7 @@ function convertToNotionBlocks(lines = [], imageProcessCallback, emojiTable = {}
     if (
       line.match(listItemMarkdownRegex) ||
       line.match(headerMarkdownRegex) ||
-      line.match(embedFileMarkdownRegex) ||
+      line.match(imageMarkdownRegex) ||
       line.match(tableMarkdownRegex) ||
       line.match(linkMarkdownRegex) ||
       line.match(quoteMarkdownRegex) ||
@@ -467,16 +467,20 @@ function convertToNotionBlocks(lines = [], imageProcessCallback, emojiTable = {}
         const headerLevel = line.match(headerMarkdownRegex)[0].trim().length;
         const headerContent = line.replace(headerMarkdownRegex, '');
         blocks.push(makeHeadingBlock(headerContent, headerLevel));
-      } else if (line.match(embedFileMarkdownRegex)) {
-        // Embed File (Image or PDF)
-        const localFilePath = line.match(embedFileMarkdownRegex)[1];
-        if (imageProcessCallback.constructor.name === 'AsyncFunction') {
-          imageProcessCallback(localFilePath).then((url) => {
-            blocks.push(makeEmbedBlock(url));
-          });
+      } else if (line.match(imageMarkdownRegex)) {
+        // Image
+        const imageFilePath = line.match(imageMarkdownRegex)[1];
+        if (imageFilePath.startsWith('http')) {
+          blocks.push(makeEmbedBlock(imageFilePath));
         } else {
-          const url = imageProcessCallback(localFilePath);
-          blocks.push(makeEmbedBlock(url));
+          if (imageProcessCallback.constructor.name === 'AsyncFunction') {
+            imageProcessCallback(imageFilePath).then((url) => {
+              blocks.push(makeEmbedBlock(url));
+            });
+          } else {
+            const url = imageProcessCallback(imageFilePath);
+            blocks.push(makeEmbedBlock(url));
+          }
         }
       } else if (line.match(tableMarkdownRegex)) {
         // Table
@@ -499,7 +503,21 @@ function convertToNotionBlocks(lines = [], imageProcessCallback, emojiTable = {}
       } else if (line.match(linkMarkdownRegex)) {
         // Link
         const match = line.match(linkMarkdownRegex);
-        blocks.push(makeLinkBlock(match[1], match[2]));
+        const text = match[1];
+        const url = match[2];
+        if (line.startsWith('http')) {
+          blocks.push(makeLinkBlock(text, url));
+        } else {
+          const localFilePath = url;
+          if (localFileProcessCallback.constructor.name === 'AsyncFunction') {
+            localFileProcessCallback(localFilePath).then((url) => {
+              blocks.push(makeEmbedBlock(url));
+            });
+          } else {
+            const url = imageProcessCallback(localFilePath);
+            blocks.push(makeEmbedBlock(url));
+          }
+        }
       } else if (line.match(quoteMarkdownRegex)) {
         // Quote
         blocks.push(makeQuoteBlock(line.replace(quoteMarkdownRegex, '')));
