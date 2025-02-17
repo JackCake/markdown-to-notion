@@ -24,8 +24,7 @@ export function clean(line = '') {
     .replaceAll('\\.', '.')
     .replaceAll('\\[', '[')
     .replaceAll('\\]', ']')
-    .replaceAll('\\`', '`')
-    .trim();
+    .replaceAll('\\`', '`');
 }
 
 export function convertToNotionBlocks(lines = [], imageProcessCallback, localFileProcessCallback, emojiTable = {}) {

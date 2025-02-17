@@ -380,8 +380,7 @@ function clean(line = '') {
     .replaceAll('\\.', '.')
     .replaceAll('\\[', '[')
     .replaceAll('\\]', ']')
-    .replaceAll('\\`', '`')
-    .trim();
+    .replaceAll('\\`', '`');
 }
 
 function convertToNotionBlocks(lines = [], imageProcessCallback, localFileProcessCallback, emojiTable = {}) {
