@@ -571,6 +571,7 @@ function convertToRichText(content = '', isCodeBlock = false) {
   let isAllStrikethrough = false;
   let isAllUnderline = false;
   let isAllCode = false;
+  let isAllHighlight = false;
   let richTextArray = [];
   let regex = /(?<!\\)(\*\*(.*?)\*\*|\*(.*?)\*|~~(.*?)~~|_(.*?)_|`(.*?)`|==(.*?)==|\$(.*?)\$|\[(.*?)\]\((.*?)\))/g;
   let lastIndex = 0;
