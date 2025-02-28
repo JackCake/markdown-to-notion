@@ -561,6 +561,7 @@ function convertToRichText(content = '', isCodeBlock = false) {
   const strikethroughMarkdownRegex = /(?<!\\)~~(.*?)~~/g;  // ~~strikethrough~~
   const underlineMarkdownRegex = /(?<!\\)_(.*?)_/g;   // _underline_
   const codeMarkdownRegex = /(?<!\\)`(.*?)`/g;        // `code`
+  const highlightMarkdownRegex = /(?<!\\)==(.*?)==/g; // ==highlight==
   const imageMarkdownRegex = /!\[.*?\]\(.*?\)/g;
   const localLinkMarkdownRegex = /\[(.*?)\]\(\.\.\\(.*?)\)/g;
   content = content.replaceAll(imageMarkdownRegex, '').replaceAll(localLinkMarkdownRegex, '');
@@ -571,7 +572,7 @@ function convertToRichText(content = '', isCodeBlock = false) {
   let isAllUnderline = false;
   let isAllCode = false;
   let richTextArray = [];
-  let regex = /(?<!\\)(\*\*(.*?)\*\*|\*(.*?)\*|~~(.*?)~~|_(.*?)_|`(.*?)`|\$(.*?)\$|\[(.*?)\]\((.*?)\))/g;
+  let regex = /(?<!\\)(\*\*(.*?)\*\*|\*(.*?)\*|~~(.*?)~~|_(.*?)_|`(.*?)`|==(.*?)==|\$(.*?)\$|\[(.*?)\]\((.*?)\))/g;
   let lastIndex = 0;
   let match;
 
@@ -587,6 +588,7 @@ function convertToRichText(content = '', isCodeBlock = false) {
         strikethrough: false,
         underline: false,
         code: false,
+        color: 'default',
       }
     });
   } else { // The code block does not need to parse the rich text.
@@ -615,6 +617,11 @@ function convertToRichText(content = '', isCodeBlock = false) {
       isAllCode = true;
       content = match[1];
     }
+    match = highlightMarkdownRegex.exec(content);
+    if (match !== null && (match.index === 0 && highlightMarkdownRegex.lastIndex === content.length)) {
+      isAllHighlight = true;
+      content = match[1];
+    }
 
     while ((match = regex.exec(content)) !== null) {
       let richTextObject = {
@@ -625,6 +632,7 @@ function convertToRichText(content = '', isCodeBlock = false) {
           strikethrough: false,
           underline: false,
           code: false,
+          color: 'default',
         }
       };
       if (match.index > lastIndex) {
@@ -639,6 +647,7 @@ function convertToRichText(content = '', isCodeBlock = false) {
             strikethrough: false,
             underline: false,
             code: false,
+            color: 'default',
           }
         });
       }
@@ -651,14 +660,14 @@ function convertToRichText(content = '', isCodeBlock = false) {
         richTextArray.push(richTextObject);
       } else if (match[3]) { // italic
         richTextObject.type = textType;
-        richTextObject[textType].content = {
+        richTextObject[textType] = {
           content: match[3]
         };
         richTextObject.annotations.italic = true;
         richTextArray.push(richTextObject);
       } else if (match[4]) { // strikethrough
         richTextObject.type = textType;
-        richTextObject[textType].content = {
+        richTextObject[textType] = {
           content: match[4]
         };
         richTextObject.annotations.strikethrough = true;
@@ -677,20 +686,27 @@ function convertToRichText(content = '', isCodeBlock = false) {
         };
         richTextObject.annotations.code = true;
         richTextArray.push(richTextObject);
-      } else if (match[7]) { // equation
+      } else if (match[7]) { // highlight
+        richTextObject.type = textType;
+        richTextObject[textType] = {
+          content: match[7]
+        };
+        richTextObject.annotations.color = 'yellow_background';
+        richTextArray.push(richTextObject);
+      } else if (match[8]) { // equation
         richTextObject.type = equationType;
         richTextObject[equationType] = {
-          expression: match[7]
+          expression: match[8]
         };
         richTextArray.push(richTextObject);
-      } else if (match[8] && match[9]) { // link
+      } else if (match[9] && match[10]) { // link
         richTextObject.type = textType;
-        let url = match[9];
+        let url = match[10];
         if (url.includes(' \'')) {
           url = url.substring(0, url.indexOf(' \''));
         }
         richTextObject[textType] = {
-          content: match[8],
+          content: match[9],
           link: {
             url: url
           }
@@ -713,6 +729,7 @@ function convertToRichText(content = '', isCodeBlock = false) {
           strikethrough: false,
           underline: false,
           code: false,
+          color: 'default',
         }
       });
     }
@@ -757,6 +774,9 @@ function convertToRichText(content = '', isCodeBlock = false) {
       }
       if (isAllCode) {
         richTextObject.annotations.code = true;
+      }
+      if (isAllHighlight) {
+        richTextObject.annotations.color = 'yellow_background';
       }
       if (richTextObject.type === equationType) {
         richTextObject[richTextObject.type].expression = clean(richTextObject[richTextObject.type].expression); // Remove the slash.
