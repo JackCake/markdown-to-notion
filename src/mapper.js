@@ -232,7 +232,6 @@ export function convertToRichText(content = '', isCodeBlock = false) {
         strikethrough: false,
         underline: false,
         code: false,
-        color: 'default',
       }
     });
   } else { // The code block does not need to parse the rich text.
@@ -276,7 +275,6 @@ export function convertToRichText(content = '', isCodeBlock = false) {
           strikethrough: false,
           underline: false,
           code: false,
-          color: 'default',
         }
       };
       if (match.index > lastIndex) {
@@ -291,7 +289,6 @@ export function convertToRichText(content = '', isCodeBlock = false) {
             strikethrough: false,
             underline: false,
             code: false,
-            color: 'default',
           }
         });
       }
@@ -373,7 +370,6 @@ export function convertToRichText(content = '', isCodeBlock = false) {
           strikethrough: false,
           underline: false,
           code: false,
-          color: 'default',
         }
       });
     }
